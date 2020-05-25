@@ -1,9 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../style/theme.dart' as Theme;
 import '../utils/bubble_indication_painter.dart';
-import '../services/auth.dart';
+import './host.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -332,7 +333,21 @@ class _LoginPageState extends State<LoginPage>
                             fontFamily: "WorkSansBold"),
                       ),
                     ),
-                    onPressed: () => showInSnackBar("Login button pressed")),
+                    onPressed: () async {
+                      FirebaseUser user = (await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                  email: loginEmailController.text,
+                                  password: loginPasswordController.text))
+                          .user;
+                      if (user != null) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Host(user)));
+                      } else {
+                        showInSnackBar("Some Error Occurred");
+                      }
+                    }),
               ),
             ],
           ),
@@ -423,13 +438,7 @@ class _LoginPageState extends State<LoginPage>
               Padding(
                 padding: EdgeInsets.only(top: 10.0),
                 child: GestureDetector(
-                  onTap: () {
-                    signInWithGoogle().then((user) {
-                      if(user.uid != null){
-                        Navigator.pushNamed(context, '/dashboard');
-                      }
-                    });
-                  },
+                  onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
                     decoration: new BoxDecoration(

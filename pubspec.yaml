@@ -24,12 +24,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   font_awesome_flutter:
- 
+  location:
   google_sign_in:
   firebase_core:
- 
+  google_maps_flutter:
   firebase_auth: 
-
+  cloud_firestore:
   rxdart:
 
 dev_dependencies:
@@ -50,6 +50,7 @@ flutter:
 
   assets:
       - assets/login_logo.png
+      - assets/img/car_icon.png
 
   fonts:
     - family: WorkSansSemiBold
