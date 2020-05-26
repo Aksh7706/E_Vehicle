@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:location/location.dart';
 import '../services/check_logged.dart';
 
 
@@ -31,7 +32,8 @@ class _DashboardState extends State<Dashboard> {
   static double zoom = 15.0;
 
   static GoogleMapController mapController;
-
+  Location _locationTracker = Location();
+  
   Map<String, Marker> allMarkers = new Map();
   Map<String, DriverData> drivers = new Map();
 
@@ -47,11 +49,13 @@ class _DashboardState extends State<Dashboard> {
           String driverId = doc.document.documentID;
           MarkerId markerId = MarkerId(driverId);
           String name = doc.document.data['name'];
+          print(name);
           var rating = doc.document.data['rating'];
           var location = LatLng(doc.document.data['location'].latitude,
               doc.document.data['location'].longitude);
 
           bool isActive = doc.document.data['isActive'];
+          drivers[driverId] = DriverData(name, rating, isActive);
 
           if (!isActive) {
             allMarkers.remove(driverId);
@@ -60,11 +64,11 @@ class _DashboardState extends State<Dashboard> {
                 markerId: markerId,
                 position: location,
                 onTap: () {
-                  print(drivers[markerId.value]);
+                  print(drivers[markerId.value].driverName);
                 });
           }
 
-          drivers[driverId] = DriverData(name, rating, isActive);
+          
         });
       });
     });
@@ -76,6 +80,21 @@ class _DashboardState extends State<Dashboard> {
     // Cancel your subscription when the screen is disposed
     subscribe.cancel();
     super.dispose();
+  }
+
+  void _getCurrentLocation() async {
+
+    var location = await _locationTracker.getLocation();
+
+    if (mapController != null) {
+        mapController
+            .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: LatLng(location.latitude, location.longitude),
+          tilt: 0,
+          zoom: zoom,
+        )));
+      }
+
   }
 
   @override
@@ -109,16 +128,17 @@ class _DashboardState extends State<Dashboard> {
               mapController = controller;
             });
           },
+          zoomControlsEnabled: false,
           myLocationEnabled: true,
-          myLocationButtonEnabled: true,
+          myLocationButtonEnabled: false,
           markers: Set<Marker>.of(allMarkers.values),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => {},
-      //   tooltip: 'Increment Counter',
-      //   child: const Icon(Icons.add),
-      // ),
+     floatingActionButton: FloatingActionButton(
+        onPressed: () => _getCurrentLocation(),
+        tooltip: 'Get Current Location',
+        child: const Icon(Icons.location_searching),
+      ),
     );
   }
 }
