@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import './home.dart';
 
 class Host extends StatefulWidget {
   final FirebaseUser user;
@@ -25,7 +26,7 @@ class _HostState extends State<Host> {
   static final db = Firestore.instance.collection("Vehicle");
   static double currentLatitude = 22.529797;
   static double currentLongitude = 75.924519;
-  static double zoom = 15.0;
+  static double zoom = 16.5;
 
   // map controller
   static GoogleMapController mapController;
@@ -92,14 +93,14 @@ class _HostState extends State<Host> {
           });
           print("Location Updated At Database as Well");
         }
-        if (mapController != null) {
-          mapController
-              .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-            target: LatLng(newLocData.latitude, newLocData.longitude),
-            tilt: 0,
-            zoom: zoom,
-          )));
-        }
+        // if (mapController != null) {
+        //   mapController
+        //       .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        //     target: LatLng(newLocData.latitude, newLocData.longitude),
+        //     tilt: 0,
+        //     zoom: zoom,
+        //   )));
+        // }
         updateMarker(newLocData, imageData);
       });
     } on PlatformException catch (e) {
@@ -112,7 +113,8 @@ class _HostState extends State<Host> {
 
   @override
   void initState() {
-    subscribe = db.snapshots().listen((snapshot) {
+    subscribe = db.snapshots().listen((snapshot) async {
+      Uint8List imageData = await _getMarker();
       setState(() {
         snapshot.documentChanges.forEach((doc) {
           print(doc.document.data);
@@ -131,7 +133,18 @@ class _HostState extends State<Host> {
               allMarkers[driverId] = Marker(
                   markerId: markerId,
                   position: location,
+                  icon: BitmapDescriptor.fromBytes(imageData),
+                  flat: true,
+                  anchor: Offset(0.5, 0.5),
                   onTap: () {
+                    if (mapController != null) {
+                      mapController.animateCamera(
+                          CameraUpdate.newCameraPosition(CameraPosition(
+                        target: LatLng(location.latitude, location.longitude),
+                        tilt: 0,
+                        zoom: zoom,
+                      )));
+                    }
                     print(markerId.value);
                   });
             }
@@ -154,8 +167,13 @@ class _HostState extends State<Host> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dashboard"),
-        backgroundColor: Color(0xFFfbab66),
+        title: Text(
+          "Dashboard",
+          style: TextStyle(
+            fontFamily: "ChelseaMarket",
+          ),
+        ),
+        backgroundColor: Colors.blue,
         actions: <Widget>[
           Switch(
             value: isActive,
@@ -178,6 +196,59 @@ class _HostState extends State<Host> {
           ),
         ],
       ),
+      drawer: new Drawer(
+        child: new Column(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+                accountName: new Text(
+                  widget.user.displayName,
+                  style: new TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.w500),
+                ),
+                accountEmail: new Text(
+                  "yuvrajn.pandey@gmail.com",
+                  style: new TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.w500),
+                )),
+            new Column(children: [
+              ListTile(
+                leading: new Icon(Icons.home),
+                title: new Text(
+                  "Home",
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    fontFamily: "ChelseaMarket",
+                  ),
+                ),onTap: (){
+                  print("hhh");
+                  Navigator.of(context).pushReplacement( MaterialPageRoute(
+                                builder: (context) => MyHome()));
+                },
+              ),
+              ListTile(
+                leading: new Icon(Icons.edit),
+                title: new Text(
+                  "Edit Profile",
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    fontFamily: "ChelseaMarket",
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: new Icon(Icons.add),
+                title: new Text(
+                  "Register Driver",
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    fontFamily: "ChelseaMarket",
+                  ),
+                ),
+              )
+            ]),
+          ],
+        ),
+      ),
       body: Container(
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
@@ -194,6 +265,7 @@ class _HostState extends State<Host> {
           markers: Set<Marker>.of(allMarkers.values),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _getCurrentLocation(),
         tooltip: 'Get Current Location',

@@ -31,6 +31,7 @@ dependencies:
   firebase_auth: 
   cloud_firestore:
   rxdart:
+  avatar_glow:
 
 dev_dependencies:
   flutter_test:
@@ -51,8 +52,13 @@ flutter:
   assets:
       - assets/login_logo.png
       - assets/img/car_icon.png
+      - assets/img/logo.png
 
   fonts:
+    - family: ChelseaMarket
+      fonts:
+        - asset: assets/fonts/Chelsea_Market/ChelseaMarket-Regular.ttf 
+
     - family: WorkSansSemiBold
       fonts:
         - asset: assets/fonts/Work_Sans/WorkSans-SemiBold.ttf

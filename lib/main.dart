@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'ui/dashboard.dart';
 import 'ui/login_page.dart';
-import 'ui/dashboard.dart';
+import 'ui/home.dart';
 
 
 void main() => runApp(new MyApp());
@@ -12,15 +12,16 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'TheGorgeousLogin',
       theme: new ThemeData(
-
+        fontFamily: "WorkSansMedium",
         primarySwatch: Colors.blue,
       ),
 
       routes: {
-        '/home' : (context) => LoginPage(),
+        '/home' : (context) => MyHome(),
         '/dashboard': (context) => Dashboard(),
       },
-      home: new Dashboard(),
+     home: new MyHome(),
+     //home: new LoginPage(),
     );
   }
 }

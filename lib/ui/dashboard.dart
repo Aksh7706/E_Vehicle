@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import '../services/check_logged.dart';
-
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key}) : super(key: key);
@@ -29,20 +30,24 @@ class _DashboardState extends State<Dashboard> {
 
   static double currentLatitude = 22.529797;
   static double currentLongitude = 75.924519;
-  static double zoom = 15.0;
+  static double zoom = 17.5;
 
   static GoogleMapController mapController;
   Location _locationTracker = Location();
-  
+
   Map<String, Marker> allMarkers = new Map();
   Map<String, DriverData> drivers = new Map();
 
   StreamSubscription<QuerySnapshot> subscribe;
 
+  Uint8List imageData;
   @override
   void initState() {
-    subscribe =
-        Firestore.instance.collection("Vehicle").snapshots().listen((snapshot) {
+    subscribe = Firestore.instance
+        .collection("Vehicle")
+        .snapshots()
+        .listen((snapshot) async {
+      await _getMarker();
       setState(() {
         snapshot.documentChanges.forEach((doc) {
           print(doc.document.data);
@@ -63,12 +68,21 @@ class _DashboardState extends State<Dashboard> {
             allMarkers[driverId] = Marker(
                 markerId: markerId,
                 position: location,
+                icon: BitmapDescriptor.fromBytes(imageData),
+                flat: true,
+                anchor: Offset(0.5, 0.5),
                 onTap: () {
+                  if (mapController != null) {
+                    mapController.animateCamera(
+                        CameraUpdate.newCameraPosition(CameraPosition(
+                      target: LatLng(location.latitude, location.longitude),
+                      tilt: 0,
+                      zoom: zoom,
+                    )));
+                  }
                   print(drivers[markerId.value].driverName);
                 });
           }
-
-          
         });
       });
     });
@@ -82,59 +96,78 @@ class _DashboardState extends State<Dashboard> {
     super.dispose();
   }
 
+  Future<void> _getMarker() async {
+    ByteData byteData =
+        await DefaultAssetBundle.of(context).load("assets/img/car_icon.png");
+    setState(() {
+      imageData = byteData.buffer.asUint8List();
+    });
+  }
+
   void _getCurrentLocation() async {
-
     var location = await _locationTracker.getLocation();
-
     if (mapController != null) {
-        mapController
-            .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(location.latitude, location.longitude),
-          tilt: 0,
-          zoom: zoom,
-        )));
-      }
-
+      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(location.latitude, location.longitude),
+        tilt: 0,
+        zoom: zoom,
+      )));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: Color(0xFFfbab66),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              FontAwesomeIcons.powerOff,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BoolLogged()),
-              );
-              ;
+        title: const Text('Dashboard', style: TextStyle(fontFamily: "ChelseaMarket",),),
+         backgroundColor: Colors.blue,
+      ),
+      body: Stack(children: [
+        Container(
+          child: GoogleMap(
+            initialCameraPosition: CameraPosition(
+                target: LatLng(currentLatitude, currentLongitude), zoom: zoom),
+            onMapCreated: (controller) {
+              setState(() {
+                mapController = controller;
+              });
             },
-          )
-        ],
-      ),
-      body: Container(
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-              target: LatLng(currentLatitude, currentLongitude), zoom: zoom),
-          onMapCreated: (controller) {
-            setState(() {
-              mapController = controller;
-            });
-          },
-          zoomControlsEnabled: false,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          markers: Set<Marker>.of(allMarkers.values),
+            zoomControlsEnabled: false,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            markers: Set<Marker>.of(allMarkers.values),
+          ),
         ),
-      ),
-     floatingActionButton: FloatingActionButton(
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text("Vehicles Online  :  ", style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                    fontSize: 15.0,
+                    fontFamily: "WorkSansMedium"
+                  ),),
+                  Text(allMarkers.length.toString(), style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.0,
+                    fontFamily: "WorkSansMedium"
+                  ),),
+                ],
+              ),
+            ),
+            decoration: BoxDecoration(color: Colors.black.withAlpha(30), borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0),bottomLeft: Radius.circular(10.0))),
+          ),
+        ),
+      ]),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _getCurrentLocation(),
         tooltip: 'Get Current Location',
         child: const Icon(Icons.location_searching),
