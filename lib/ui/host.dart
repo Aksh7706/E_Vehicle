@@ -201,12 +201,12 @@ class _HostState extends State<Host> {
           children: <Widget>[
             new UserAccountsDrawerHeader(
                 accountName: new Text(
-                  widget.user.displayName,
+                  "Akshay",
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),
                 accountEmail: new Text(
-                  "yuvrajn.pandey@gmail.com",
+                  "aksh@gmail.com",
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 )),
