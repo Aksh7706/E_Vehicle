@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_vehicle/ui/login_page.dart';
+import 'package:e_vehicle/ui/register_driver.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,14 +23,12 @@ class Host extends StatefulWidget {
 
 class _HostState extends State<Host> {
   // is driver active
-  bool isActive = false;
-
+  var name,rating,location,isActive;
   // static variables
   static final db = Firestore.instance.collection("Vehicle");
   static double currentLatitude = 22.529797;
   static double currentLongitude = 75.924519;
   static double zoom = 16.5;
-
   // map controller
   static GoogleMapController mapController;
   Location _locationTracker = Location();
@@ -44,6 +44,10 @@ class _HostState extends State<Host> {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/img/car_icon.png");
     return byteData.buffer.asUint8List();
+  }
+
+  void signOut() async{
+    await FirebaseAuth.instance.signOut();
   }
 
   // Update Caddy's Location
@@ -121,12 +125,11 @@ class _HostState extends State<Host> {
           print(doc.document.data);
           String driverId = doc.document.documentID;
           MarkerId markerId = MarkerId(driverId);
-          String name = doc.document.data['name'];
-          var rating = doc.document.data['rating'];
-          var location = LatLng(doc.document.data['location'].latitude,
+          name = doc.document.data['name'];
+          rating = doc.document.data['rating'];
+          location = LatLng(doc.document.data['location'].latitude,
               doc.document.data['location'].longitude);
-
-          bool isActive = doc.document.data['isActive'];
+          isActive = doc.document.data['isActive'];
           if (driverId != widget.user.uid) {
             if (!isActive) {
               allMarkers.remove(driverId);
@@ -202,12 +205,12 @@ class _HostState extends State<Host> {
           children: <Widget>[
             new UserAccountsDrawerHeader(
                 accountName: new Text(
-                  "Akshay",
+                  name,
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),
                 accountEmail: new Text(
-                  "aksh@gmail.com",
+                  widget.user.email,
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 )),
@@ -220,8 +223,8 @@ class _HostState extends State<Host> {
                     fontSize: 18.0,
                     fontFamily: "ChelseaMarket",
                   ),
-                ),onTap: (){
-                  print("hhh");
+                ),
+                onTap: (){
                   Navigator.of(context).pushReplacement( MaterialPageRoute(
                                 builder: (context) => MyHome()));
                 },
@@ -236,15 +239,22 @@ class _HostState extends State<Host> {
                   ),
                 ),
               ),
-              ListTile(
-                leading: new Icon(Icons.add),
-                title: new Text(
-                  "Register Driver",
-                  style: new TextStyle(
-                    fontSize: 18.0,
-                    fontFamily: "ChelseaMarket",
+              FlatButton(
+                child: ListTile(
+                  leading: new Icon(Icons.add),
+                  title: new Text(
+                    "Register Driver",
+                    style: new TextStyle(
+                      fontSize: 18.0,
+                      fontFamily: "ChelseaMarket",
+                    ),
                   ),
                 ),
+                onPressed: (){
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => RegisterDriver()),
+                  );
+                }
               ),
               FlatButton(
                 child: ListTile(
@@ -262,6 +272,25 @@ class _HostState extends State<Host> {
                       MaterialPageRoute(builder: (context) => chatPage(widget.user)),
                   );
                 }
+              ),
+              FlatButton(
+                  child: ListTile(
+                    leading: new Icon(Icons.chat),
+                    title: new Text(
+                      "Logout",
+                      style: new TextStyle(
+                        fontSize: 18.0,
+                        fontFamily: "ChelseaMarket",
+                      ),
+                    ),
+                  ),
+                  onPressed: (){
+                    signOut();
+                    Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context)=>MyHome())
+                      );
+                  },
               ),
             ]),
           ],
@@ -292,3 +321,4 @@ class _HostState extends State<Host> {
     );
   }
 }
+
