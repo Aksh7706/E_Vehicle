@@ -10,12 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'TheGorgeousLogin',
-      theme: new ThemeData(
-        fontFamily: "WorkSansMedium",
-        primarySwatch: Colors.blue,
-      ),
-
       routes: {
         '/home' : (context) => MyHome(),
         '/dashboard': (context) => Dashboard(),

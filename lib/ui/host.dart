@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import './home.dart';
+import './chatPage.dart';
 
 class Host extends StatefulWidget {
   final FirebaseUser user;
@@ -244,7 +245,24 @@ class _HostState extends State<Host> {
                     fontFamily: "ChelseaMarket",
                   ),
                 ),
-              )
+              ),
+              FlatButton(
+                child: ListTile(
+                  leading: new Icon(Icons.chat),
+                  title: new Text(
+                    "Chat",
+                    style: new TextStyle(
+                      fontSize: 18.0,
+                      fontFamily: "ChelseaMarket",
+                    ),
+                  ),
+                ),
+                onPressed: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => chatPage(widget.user)),
+                  );
+                }
+              ),
             ]),
           ],
         ),
