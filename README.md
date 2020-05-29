@@ -6,13 +6,6 @@ This flutter app is meant for E-Vehicle tracking in IIT Indore. It works on the 
 
 ## Screens 
 
-This project is a starting point for a Flutter application.
+**HomeScreens** <br/> <br/>
+![HomeScreen](https://firebasestorage.googleapis.com/v0/b/e-vehicle-project.appspot.com/o/WhatsApp%20Image%202020-05-29%20at%2011.21.25%20PM.jpg?alt=media&token=c6ec7d7e-c77e-4345-8172-96418272fdd6)&nbsp;&nbsp;&nbsp;![Caddy Driver's Login Screen](https://firebasestorage.googleapis.com/v0/b/e-vehicle-project.appspot.com/o/WhatsApp%20Image%202020-05-29%20at%2011.21.25%20PM%20(1).jpg?alt=media&token=4fd731e5-1389-4d01-b367-b4353f2e04d3)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
