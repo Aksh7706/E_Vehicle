@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_vehicle/ui/host.dart';
-import 'package:e_vehicle/ui/login_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import './home.dart';
-import 'package:location/location.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -24,6 +20,8 @@ class _RegisterDriverState extends State<RegisterDriver>{
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   TextEditingController confirmPwdInputController;
+  TextEditingController phoneNoInputController;
+
   File sampleImage;
 
   Future getImage() async{
@@ -65,7 +63,7 @@ class _RegisterDriverState extends State<RegisterDriver>{
       return null;
     }
   }
-  Location _locationTracker = Location();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +100,13 @@ class _RegisterDriverState extends State<RegisterDriver>{
                       ),
                       TextFormField(
                         decoration: InputDecoration(
+                            labelText: 'Phone No*', hintText: "1234567890"),
+                        controller: phoneNoInputController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
                             labelText: 'Password*', hintText: "********"),
                         controller: pwdInputController,
                         obscureText: true,
@@ -129,11 +134,12 @@ class _RegisterDriverState extends State<RegisterDriver>{
                                   .document(currentUser.user.uid)
                                   .setData({
                                 "name": firstNameInputController.text,
-                                "caddyId": "zxcnj",
-                                "goingTowards":  "asnjs",
+                                "caddyId": "XXXX-23456",
+                                "goingTowards":  "Pod 1-A",
                                 "image": enableUpload(emailInputController.text),
                                 "isActive": false,
                                 "location": GeoPoint(22.529797,75.924519),
+                                "phoneNo" : phoneNoInputController.text,
                                 "rating": 5.0,
                               })
                                   .then((result) => {
@@ -146,7 +152,8 @@ class _RegisterDriverState extends State<RegisterDriver>{
                                 lastNameInputController.clear(),
                                 emailInputController.clear(),
                                 pwdInputController.clear(),
-                                confirmPwdInputController.clear()
+                                confirmPwdInputController.clear(),
+                                phoneNoInputController.clear()
                               })
                                   .catchError((err) => print(err)))
                                   .catchError((err) => print(err));

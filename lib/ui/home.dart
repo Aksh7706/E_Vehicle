@@ -119,21 +119,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                     DelayedAnimation(
                       child: GestureDetector(
                         onTap: () {
-                          // bool logged = await googleSignIn.isSignedIn();
-                          // if (!logged) {
-                          //   await FirebaseAuth.instance.signOut();
-                          //   FirebaseUser user = await signInWithGoogle();
-                          //   Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Dashboard(user: user)),
-                          //   );
-                          // }else{
-                          //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
-                          //   Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //         builder: (context) => Dashboard(user: user)),
-                          //   );
-                          // }
                            Navigator.of(context).push(
                               MaterialPageRoute(
                                   builder: (context) => Dashboard()),
@@ -160,22 +145,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                               color: color),
                         ),
                         onPressed: ()  {
-                          // bool logged = await googleSignIn.isSignedIn();
-                          // if (!logged) {
-                          //    Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => BoolLogged()),
-                          //   );
-                          // }else{
-                          //   await FirebaseAuth.instance.signOut();
-                          //   await googleSignIn.signOut();
-                          //  Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => BoolLogged()),
-                          //   );
-                          // }
                             Navigator.push(
                             context,
                             MaterialPageRoute(

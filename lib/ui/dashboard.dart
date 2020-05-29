@@ -54,9 +54,9 @@ class _DashboardState extends State<Dashboard> {
   bool sosCalled = false;
 
   Uint8List imageData;
-  @override
-  void initState() {
-    subscribe = Firestore.instance
+
+  void getSubscription() {
+    this.subscribe = Firestore.instance
         .collection("Vehicle")
         .snapshots()
         .listen((snapshot) async {
@@ -106,6 +106,11 @@ class _DashboardState extends State<Dashboard> {
         });
       });
     });
+  }
+
+  @override
+  void initState() {
+    getSubscription();
     super.initState();
   }
 
@@ -135,7 +140,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  void sos(Map<String, DriverData> drivers) async {
+  void _sos(Map<String, DriverData> drivers) async {
     var location = await _locationTracker.getLocation();
     var minDist = double.infinity;
     String k;
@@ -228,7 +233,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-    Widget _driverClosestDetails(DriverData c) {
+  Widget _driverClosestDetails(DriverData c) {
     TextStyle textStyle1 = TextStyle(
         fontFamily: "ChelseaMarket", color: Colors.white, fontSize: 15.0);
     TextStyle textStyle = TextStyle(
@@ -264,7 +269,7 @@ class _DashboardState extends State<Dashboard> {
                 borderRadius: BorderRadius.circular(12.0),
               ),
     onPressed: (){
-      launch("tel://"+c.phoneNo.toString());
+       _sosCall(c.phoneNo);
       },
     color: Colors.red,
     child:  Row(
@@ -388,7 +393,7 @@ class _DashboardState extends State<Dashboard> {
               ));
   }
 
-   Widget _currentClosestDriver() {
+  Widget _currentClosestDriver() {
     return Align(
         alignment: Alignment.topCenter,
         child: sosCalled
@@ -547,7 +552,10 @@ class _DashboardState extends State<Dashboard> {
                 height: 0,
               ));
   }
-
+  
+  void _sosCall(var number){
+    launch("tel://"+number.toString());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -576,7 +584,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               onPressed: () {
                 print("ad");
-                sos(this.drivers);
+                _sos(this.drivers);
               },
               color: Colors.red,
             ),
