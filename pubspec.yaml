@@ -32,6 +32,8 @@ dependencies:
   cloud_firestore:
   rxdart:
   avatar_glow:
+  geolocator: 
+  url_launcher: ^5.4.10
 
 dev_dependencies:
   flutter_test:

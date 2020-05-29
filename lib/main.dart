@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'TheGorgeousLogin',
+      title: 'E-Rath',
       theme: new ThemeData(
         fontFamily: "WorkSansMedium",
         primarySwatch: Colors.blue,
