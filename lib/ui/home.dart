@@ -1,9 +1,9 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import '../utils/delayed_animation.dart';
-import 'dashboard.dart';
 import '../style/theme.dart' as Theme;
 import '../services/check_logged.dart';
+import 'dashboard.dart';
 
 class MyHome extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
+  //final GoogleSignIn googleSignIn = GoogleSignIn();
   final int delayedAmount = 500;
   double _scale;
   AnimationController _controller;
@@ -117,13 +118,26 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                   children: <Widget>[
                     DelayedAnimation(
                       child: GestureDetector(
-                        //onTapDown: _onTapDown,
-                        //onTapUp: _onTapUp,
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => Dashboard()),
-                          );
+                          // bool logged = await googleSignIn.isSignedIn();
+                          // if (!logged) {
+                          //   await FirebaseAuth.instance.signOut();
+                          //   FirebaseUser user = await signInWithGoogle();
+                          //   Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //         builder: (context) => Dashboard(user: user)),
+                          //   );
+                          // }else{
+                          //   FirebaseUser user = await FirebaseAuth.instance.currentUser();
+                          //   Navigator.of(context).push(
+                          //     MaterialPageRoute(
+                          //         builder: (context) => Dashboard(user: user)),
+                          //   );
+                          // }
+                           Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Dashboard()),
+                            );
                         },
                         child: Transform.scale(
                           scale: _scale,
@@ -145,12 +159,28 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                               fontWeight: FontWeight.bold,
                               color: color),
                         ),
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: ()  {
+                          // bool logged = await googleSignIn.isSignedIn();
+                          // if (!logged) {
+                          //    Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => BoolLogged()),
+                          //   );
+                          // }else{
+                          //   await FirebaseAuth.instance.signOut();
+                          //   await googleSignIn.signOut();
+                          //  Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => BoolLogged()),
+                          //   );
+                          // }
+                            Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => BoolLogged()),
-                          );
+                            );
                         },
                       ),
                       delay: delayedAmount + 2000,

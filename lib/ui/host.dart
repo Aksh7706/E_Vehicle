@@ -238,6 +238,12 @@ class _HostState extends State<Host> {
                     fontFamily: "ChelseaMarket",
                   ),
                 ),
+                onTap: () async{
+                  await Firestore.instance.collection("Vehicle").document(widget.user.uid).get().then((snapshot){
+                    var currentUser = snapshot.data; // make this current user global and use setState
+                    print(currentUser['image']);
+                  });
+                },
               ),
               FlatButton(
                 child: ListTile(
@@ -273,25 +279,23 @@ class _HostState extends State<Host> {
                   );
                 }
               ),
-              FlatButton(
-                  child: ListTile(
-                    leading: new Icon(Icons.chat),
-                    title: new Text(
-                      "Logout",
-                      style: new TextStyle(
-                        fontSize: 18.0,
-                        fontFamily: "ChelseaMarket",
-                      ),
-                    ),
+              ListTile(
+                leading: new Icon(Icons.power_settings_new),
+                title: new Text(
+                  "Sign Out",
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    fontFamily: "ChelseaMarket",
                   ),
-                  onPressed: (){
-                    signOut();
-                    Navigator.push(context,
-                      MaterialPageRoute(
-                        builder: (context)=>MyHome())
-                      );
-                  },
-              ),
+                ),
+                onTap: ()async{
+                  await FirebaseAuth.instance.signOut().then((_){
+                    Navigator.pop(context);
+                    Navigator.of(context).pushReplacement( MaterialPageRoute(
+                                builder: (context) => MyHome()));
+                  });
+                },
+              )
             ]),
           ],
         ),

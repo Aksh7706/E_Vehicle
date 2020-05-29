@@ -9,7 +9,13 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     return new MaterialApp(
+      title: 'E-Rath',
+      theme: new ThemeData(
+        fontFamily: "WorkSansMedium",
+        primarySwatch: Colors.blue,
+      ),
       routes: {
         '/home' : (context) => MyHome(),
         '/dashboard': (context) => Dashboard(),
