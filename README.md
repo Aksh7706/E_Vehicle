@@ -1,6 +1,6 @@
 # E-Rath (E-Vehicle System IIT Indore)
 
-A new Flutter project.
+This flutter app is meant for E-Vehicle tracking in IIT Indore. It works on the priciple of realtime geolocation tracking of the driver’s vehicles and showing the realtime location of all the active vehicles on the client side.
 
 ## Getting Started
 
