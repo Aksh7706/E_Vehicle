@@ -4,7 +4,7 @@ This flutter app is meant for E-Vehicle tracking in IIT Indore. It works on the 
   1 ) **Users Part**<br/>
   2 ) **Driver's Console**
 
-## Getting Started
+## Screens 
 
 This project is a starting point for a Flutter application.
 
