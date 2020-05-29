@@ -35,7 +35,7 @@ class Host extends StatefulWidget {
 
 class _HostState extends State<Host> {
   // is driver active
-  var name, rating, location, isActive;
+  var rating, location, isActive;
   // static variables
   static final db = Firestore.instance.collection("Vehicle");
   static double currentLatitude = 22.529797;
@@ -179,7 +179,7 @@ class _HostState extends State<Host> {
           print(doc.document.data);
           String driverId = doc.document.documentID;
           MarkerId markerId = MarkerId(driverId);
-          name = doc.document.data['name'];
+          String name = doc.document.data['name'];
           rating = doc.document.data['rating'];
           String caddyId = doc.document.data['caddyId'];
           String image = doc.document.data['image'];
@@ -537,7 +537,7 @@ class _HostState extends State<Host> {
           children: <Widget>[
             new UserAccountsDrawerHeader(
                 accountName: new Text(
-                  name,
+                  drivers[widget.user.uid].driverName == null ? " " : drivers[widget.user.uid].driverName,
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),
