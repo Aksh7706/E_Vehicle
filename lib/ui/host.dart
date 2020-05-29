@@ -35,7 +35,10 @@ class Host extends StatefulWidget {
 
 class _HostState extends State<Host> {
   // is driver active
-  var rating, location, isActive;
+  var rating, location;
+  bool isActive = false;
+
+  
   // static variables
   static final db = Firestore.instance.collection("Vehicle");
   static double currentLatitude = 22.529797;
@@ -186,7 +189,7 @@ class _HostState extends State<Host> {
           String goingTowards = doc.document.data['goingTowards'];
           location = LatLng(doc.document.data['location'].latitude,
               doc.document.data['location'].longitude);
-          isActive = doc.document.data['isActive'];
+          bool isActive = doc.document.data['isActive'];
 
           drivers[driverId] = DriverData(
               name,
@@ -340,7 +343,7 @@ class _HostState extends State<Host> {
 
   void _handleClientStream(bool value) {
     setState(() {
-      isActive = value;
+      this.isActive = value;
       db.document(widget.user.uid).updateData({
         'isActive': value,
       });
@@ -537,7 +540,7 @@ class _HostState extends State<Host> {
           children: <Widget>[
             new UserAccountsDrawerHeader(
                 accountName: new Text(
-                  drivers[widget.user.uid].driverName == null ? " " : drivers[widget.user.uid].driverName,
+                  drivers.containsKey(widget.user.uid) ? drivers[widget.user.uid].driverName : " ",
                   style: new TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),

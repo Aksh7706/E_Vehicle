@@ -35,6 +35,7 @@ class _chatPageState extends State<chatPage>{
       'from':widget.user.email,
       'imagelink': imagelink,
         'name':name,
+        "timestamp": DateTime.now().millisecondsSinceEpoch
       });
       messageController.clear();
       scrollController.animateTo(
@@ -66,7 +67,7 @@ class _chatPageState extends State<chatPage>{
           children: <Widget>[
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('messages').snapshots(),
+                stream: _firestore.collection('messages').orderBy('timestamp', descending: false).snapshots(),
                 builder: (context,snapshot){
                   if(!snapshot.hasData)
                     return Center(
