@@ -1,4 +1,4 @@
-# e_vehicle
+# E-Rath (E-Vehicle System IIT Indore)
 
 A new Flutter project.
 
