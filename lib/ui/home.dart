@@ -121,7 +121,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
                         onTap: () {
                            Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => Dashboard()),
+                                  builder: (context) => User()),
                             );
                         },
                         child: Transform.scale(

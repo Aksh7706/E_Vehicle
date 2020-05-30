@@ -10,56 +10,42 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
+import './driver_details.dart';
 
-class Dashboard extends StatefulWidget {
+class User extends StatefulWidget {
 
-  Dashboard({Key key}) : super(key: key);
+  User({Key key}) : super(key: key);
 
   @override
-  _DashboardState createState() => _DashboardState();
+  _UserState createState() => _UserState();
 }
 
-class DriverData {
-  String driverName;
-  var rating;
-  bool isActive;
-  String image;
-  String caddyId;
-  String goingTowards;
-  GeoPoint latlong;
-  var phoneNo;
-  DriverData(this.driverName, this.rating, this.isActive, this.image,
-      this.caddyId, this.goingTowards, this.latlong, this.phoneNo);
-}
 
-class _DashboardState extends State<Dashboard> {
-  static final db = Firestore.instance.collection("Vehicle");
+class _UserState extends State<User> {
+  static final _db = Firestore.instance.collection("Vehicle");
 
-  static double currentLatitude = 22.529797;
-  static double currentLongitude = 75.924519;
-  static double zoom = 17.5;
+  static double _intialLatitude = 22.529797;
+  static double _intialLongitude = 75.924519;
+  static double _zoom = 17.5;
 
-  static GoogleMapController mapController;
+  static GoogleMapController _mapController;
   Location _locationTracker = Location();
 
-  Map<String, Marker> allMarkers = new Map();
-  Map<String, DriverData> drivers = new Map();
+  Map<String, Marker> _allMarkers = new Map();
+  Map<String, DriverData> _drivers = new Map();
 
-  StreamSubscription<QuerySnapshot> subscribe;
+  StreamSubscription<QuerySnapshot> _subscribe;
 
   DriverData currentDriver;
-  bool showCurrentDriver = false;
+  bool _showCurrentDriver = false;
 
-  DriverData currentSOS;
-  bool sosCalled = false;
+  DriverData _currentSOS;
+  bool _sosCalled = false;
 
-  Uint8List imageData;
+  Uint8List _imageData;
 
   void getSubscription() {
-    this.subscribe = Firestore.instance
-        .collection("Vehicle")
-        .snapshots()
-        .listen((snapshot) async {
+    this._subscribe = _db.snapshots().listen((snapshot) async {
       await _getMarker();
       setState(() {
         snapshot.documentChanges.forEach((doc) {
@@ -76,30 +62,30 @@ class _DashboardState extends State<Dashboard> {
               doc.document.data['location'].longitude);
 
           bool isActive = doc.document.data['isActive'];
-          drivers[driverId] = DriverData(name, rating, isActive, image, caddyId,
+          _drivers[driverId] = DriverData(name, rating, isActive, image, caddyId,
               goingTowards, doc.document.data['location'], doc.document.data['phoneNo']);
 
           if (!isActive) {
-            allMarkers.remove(driverId);
+            _allMarkers.remove(driverId);
           } else {
-            allMarkers[driverId] = Marker(
+            _allMarkers[driverId] = Marker(
                 markerId: markerId,
                 position: location,
-                icon: BitmapDescriptor.fromBytes(imageData),
+                icon: BitmapDescriptor.fromBytes(_imageData),
                 flat: true,
                 anchor: Offset(0.5, 0.5),
                 onTap: () {
-                  if (mapController != null) {
-                    mapController.animateCamera(
+                  if (_mapController != null) {
+                    _mapController.animateCamera(
                         CameraUpdate.newCameraPosition(CameraPosition(
                       target: LatLng(location.latitude, location.longitude),
                       tilt: 0,
-                      zoom: zoom,
+                      zoom: _zoom,
                     )));
                   }
                   setState(() {
-                    showCurrentDriver = true;
-                    currentDriver = drivers[markerId.value];
+                    _showCurrentDriver = true;
+                    currentDriver = _drivers[markerId.value];
                   });
                 });
           }
@@ -117,7 +103,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   void dispose() {
     // Cancel your subscription when the screen is disposed
-    subscribe.cancel();
+    _subscribe.cancel();
     super.dispose();
   }
 
@@ -125,17 +111,17 @@ class _DashboardState extends State<Dashboard> {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/img/car_icon.png");
     setState(() {
-      imageData = byteData.buffer.asUint8List();
+      _imageData = byteData.buffer.asUint8List();
     });
   }
 
   void _getCurrentLocation() async {
     var location = await _locationTracker.getLocation();
-    if (mapController != null) {
-      mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    if (_mapController != null) {
+      _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(location.latitude, location.longitude),
         tilt: 0,
-        zoom: zoom,
+        zoom: _zoom,
       )));
     }
   }
@@ -168,9 +154,9 @@ class _DashboardState extends State<Dashboard> {
 
     print(drivers[k].driverName);
     setState(() {
-      this.showCurrentDriver = false;
-      this.sosCalled = true;
-      this.currentSOS =drivers[k];
+      this._showCurrentDriver = false;
+      this._sosCalled = true;
+      this._currentSOS =drivers[k];
     });
   }
 
@@ -299,7 +285,7 @@ class _DashboardState extends State<Dashboard> {
   Widget _currentDriver() {
     return Align(
         alignment: Alignment.bottomCenter,
-        child: showCurrentDriver
+        child: _showCurrentDriver
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 85.0, left: 5, right: 5),
                 child: Card(
@@ -334,7 +320,7 @@ class _DashboardState extends State<Dashboard> {
                                 icon: Icon(Icons.close),
                                 onPressed: () {
                                   setState(() {
-                                    showCurrentDriver = false;
+                                    _showCurrentDriver = false;
                                   });
                                 },
                               )
@@ -396,7 +382,7 @@ class _DashboardState extends State<Dashboard> {
   Widget _currentClosestDriver() {
     return Align(
         alignment: Alignment.topCenter,
-        child: sosCalled
+        child: _sosCalled
             ? Padding(
                 padding: const EdgeInsets.only(top: 40.0, left: 5, right: 5),
                 child: Card(
@@ -443,7 +429,7 @@ class _DashboardState extends State<Dashboard> {
                                 icon: Icon(Icons.close),
                                 onPressed: () {
                                   setState(() {
-                                    sosCalled = false;
+                                    _sosCalled = false;
                                   });
                                 },
                               )
@@ -532,14 +518,14 @@ class _DashboardState extends State<Dashboard> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.transparent,
                                     backgroundImage: NetworkImage(
-                                      currentSOS.image,
+                                      _currentSOS.image,
                                     ),
                                   ),
                                 ),
                               ),
                               Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: _driverClosestDetails(currentSOS))
+                                  child: _driverClosestDetails(_currentSOS))
                             ],
                           ),
                         )
@@ -584,7 +570,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               onPressed: () {
                 print("ad");
-                _sos(this.drivers);
+                _sos(this._drivers);
               },
               color: Colors.red,
             ),
@@ -595,16 +581,16 @@ class _DashboardState extends State<Dashboard> {
         Container(
           child: GoogleMap(
             initialCameraPosition: CameraPosition(
-                target: LatLng(currentLatitude, currentLongitude), zoom: zoom),
+                target: LatLng(_intialLatitude, _intialLongitude), zoom: _zoom),
             onMapCreated: (controller) {
               setState(() {
-                mapController = controller;
+                _mapController = controller;
               });
             },
             zoomControlsEnabled: false,
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            markers: Set<Marker>.of(allMarkers.values),
+            markers: Set<Marker>.of(_allMarkers.values),
           ),
         ),
         Align(
@@ -625,7 +611,7 @@ class _DashboardState extends State<Dashboard> {
                         fontFamily: "WorkSansMedium"),
                   ),
                   Text(
-                    allMarkers.length.toString(),
+                    _allMarkers.length.toString(),
                     style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
